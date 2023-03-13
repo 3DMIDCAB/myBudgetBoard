@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <title>Budget Board</title>
+</head>
+<body>
+  <h1>BudgetTavlan</h1>
+
+  <form>
+    <label for="income">Inkomst:</label>
+    <input type="number" id="income" name="income"><br>
+
+    <label for="expenses">Utgifter:</label>
+    <input type="number" id="expenses" name="expenses"><br>
+
+    <button type="button" onclick="addData()">Lägg till</button>
+  </form>
+
+  <table id="budget-table">
+    <thead>
+      <tr>
+        <th>Månad</th>
+        <th>Inkomst</th>
+        <th>Utgifter</th>
+        <th>Saldo</th>
+      </tr>
+    </thead>
+    <tbody id="budget-table-body">
+    </tbody>
+  </table>
+
+  <!-- Firebase JavaScript SDK -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyC-M0CgiaMuz4WeV1o-2v_wSiiLdeNa0ZA",
+      authDomain: "mybudgetboard.firebaseapp.com",
+      databaseURL: "https://mybudgetboard-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "mybudgetboard",
+      storageBucket: "mybudgetboard.appspot.com",
+      messagingSenderId: "599500534135",
+      appId: "1:599500534135:web:f283840d42521cdf1d3172",
+      measurementId: "G-8233KC1WHK"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
+  <!-- JavaScript code -->
+  <script>
+
+    
+    function addData() {
+      const income = document.getElementById("income").value;
+      const expenses = document.getElementById("expenses").value;
+      const saldo = income - expenses;
+      const date = new Date();
+
+      database.ref("budgets").push({
+        date: date.toLocaleString("sv"),
+        income: income,
+        expenses: expenses,
+        saldo: saldo
+      });
+    }
+
+    // Load data from Firebase database
+    database.ref("budgets").on("child_added", (snapshot) => {
+      const data = snapshot.val();
+      const tableRow = document.createElement("tr");
+      const dateCell = document.createElement("td");
+      const incomeCell = document.createElement("td");
+      const expensesCell = document.createElement("td");
+      const saldoCell = document.createElement("td");
+
+      dateCell.innerText = data.date;
+      incomeCell.innerText = data.income;
+      expensesCell.innerText = data.expenses;
+      saldoCell.innerText = data.saldo;
+
+      tableRow.appendChild(dateCell);
+      tableRow.appendChild(incomeCell);
+      tableRow.appendChild(expensesCell);
+      tableRow.appendChild(saldoCell);
+
+      document.getElementById("budget-table-body").appendChild(tableRow);
+    });
+  </script>
+</body>
+</html>
